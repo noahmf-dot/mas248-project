@@ -1,0 +1,66 @@
+Panels:
+- Class: rviz_common/Displays
+  Name: Displays
+- Class: rviz_common/Views
+  Name: Views
+  Expanded:
+  - /Current View1
+Visualization Manager:
+  Class: ''
+  Displays:
+  - Class: rviz_default_plugins/Grid
+    Name: Grid
+    Plane: XY
+    Cell Size: 1
+    Plane Cell Count: 10
+    Value: true
+  - Class: rviz_default_plugins/RobotModel
+    Name: RobotModel
+    Description Source: Topic
+    Description Topic:
+      Value: /robot_description
+    Visual Enabled: true
+    Collision Enabled: false
+    Value: false
+  - Class: rviz_default_plugins/TF
+    Name: TF
+    Show Names: true
+    Value: false
+  - Class: moveit_rviz_plugin/MotionPlanning
+    Name: MotionPlanning
+    Move Group Namespace: ''
+    Planning Scene Topic: /monitored_planning_scene
+    Robot Description: robot_description
+    Value: true
+  - Class: rviz_default_plugins/MarkerArray
+    Name: MAS248 Image TCP Targets
+    Marker Topic:
+      Value: /mas248/drawing_targets
+    Queue Size: 100
+    Value: true
+  Global Options:
+    Fixed Frame: world
+  Name: root
+  Tools:
+  - Class: rviz_default_plugins/Interact
+    Hide Inactive Objects: true
+  - Class: rviz_default_plugins/MoveCamera
+  - Class: rviz_default_plugins/Select
+  - Class: rviz_default_plugins/FocusCamera
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Distance: 3.5
+      Focal Point:
+        X: 0.0
+        Y: 0.0
+        Z: 0.5
+      Name: Current View
+      Pitch: 0.45
+      Yaw: 0.75
+      Target Frame: <Fixed Frame>
+      Value: Orbit (rviz)
+    Saved: null
+Window Geometry:
+  Height: 900
+  Width: 1600

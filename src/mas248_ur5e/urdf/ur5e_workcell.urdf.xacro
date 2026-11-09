@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<robot name="mas248_ur5e" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Main arguments -->
+  <xacro:arg name="ur_type" default="ur5e"/>
+  <xacro:arg name="tf_prefix" default=""/>
+  <xacro:arg name="robot_ip" default="0.0.0.0"/>
+  <xacro:arg name="safety_limits" default="true"/>
+  <xacro:arg name="name" default="ur"/>
+  <xacro:arg name="use_fake_hardware" default="true"/>
+
+  <!-- Vendor robot model (keep original package untouched) -->
+  <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/> <!-- Here we define the original UR5e model from a driver -->
+
+
+<!-- TO BE DONE TODAY  beginning-->
+
+  <!-- Workcell root -->
+  <link name="world"/>  <!-- I am dummy -->
+
+  
+  <!-- Pedestal: built directly into this workcell -->
+ <link name="pedestal_link"/>
+  
+  
+  <!-- Spindle and custom TCP (illustrative tool dimensions, metres) -->
+   <link name="spindle">
+    <!-- Forenklet holder -->
+    <visual>
+      <origin xyz="0 0 0.035"/>
+      <geometry>
+        <box size="0.040 0.030 0.070"/>
+      </geometry>
+      <material name="holder_black">
+        <color rgba="0.15 0.15 0.15 1"/>
+      </material>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0.035"/>
+      <geometry>
+        <box size="0.040 0.030 0.070"/>
+      </geometry>
+    </collision>
+
+    <!-- Penn langs lokal -Y, med enden ved TCP -->
+    <visual>
+      <origin xyz="0 -0.050 0.070"
+              rpy="1.57079632679 0 0"/>
+      <geometry>
+        <cylinder radius="0.007" length="0.100"/>
+      </geometry>
+      <material name="pen_green">
+        <color rgba="0.1 0.65 0.2 1"/>
+      </material>
+    </visual>
+
+    <collision>
+      <origin xyz="0 -0.050 0.070"
+              rpy="1.57079632679 0 0"/>
+      <geometry>
+        <cylinder radius="0.007" length="0.100"/>
+      </geometry>
+    </collision>
+  </link>
+  
+
+  <!-- A TCP needs its own URDF link -->
+  <link name="tcp"/>
+
+  <!-- Extend the manufacturer tool0 frame without modifying UR files -->
+  <joint name="tool0_to_spindle" type="fixed">
+    <parent link="tool0"/>
+    <child link="spindle"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+   <!-- Pen tip: 70 mm outward and 100 mm along tool0 -Y.
+       TCP +Z points along the pen towards the writing tip. -->
+  <joint name="spindle_to_tcp" type="fixed">
+    <parent link="spindle"/>
+    <child link="tcp"/>
+    <origin xyz="0 -0.100 0.070"
+            rpy="1.57079632679 0 0"/>
+  </joint>
+
+  <!-- The pedestal frame is at the top of the 0.50-m cylinder -->
+  <joint name="world_to_pedestal" type="fixed">
+    <parent link="world"/>
+    <child link="pedestal_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+<!-- TO BE DONE TODAY  The end -->
+
+  <!-- Instantiate UR robot -->
+  <xacro:ur_robot
+    name="$(arg name)"
+    ur_type="$(arg ur_type)"
+    tf_prefix="$(arg tf_prefix)"
+    parent="pedestal_link"
+    joint_limits_parameters_file="$(find ur_description)/config/$(arg ur_type)/joint_limits.yaml"
+    kinematics_parameters_file="$(find ur_description)/config/$(arg ur_type)/default_kinematics.yaml"
+    physical_parameters_file="$(find ur_description)/config/$(arg ur_type)/physical_parameters.yaml"
+    visual_parameters_file="$(find ur_description)/config/$(arg ur_type)/visual_parameters.yaml"
+    safety_limits="$(arg safety_limits)"
+    safety_pos_margin="0.15"
+    safety_k_position="20"
+    generate_ros2_control_tag="false"
+    use_fake_hardware="$(arg use_fake_hardware)"
+    headless_mode="true"
+    robot_ip="$(arg robot_ip)"
+    script_filename=""
+    input_recipe_filename=""
+    output_recipe_filename=""
+  >
+  <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:ur_robot>
+
+  <!-- Simple work table FOR FUN and LEARNING-->
+    <!-- Forenklet bord: oversiden ligger ved Z = 0 -->
+  <link name="table_link">
+    <visual>
+      <geometry>
+        <box size="1.60 1.00 0.040"/>
+      </geometry>
+      <material name="table_grey">
+        <color rgba="0.65 0.65 0.68 1"/>
+      </material>
+    </visual>
+
+    <collision>
+      <geometry>
+        <box size="1.60 1.00 0.040"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="base_to_table" type="fixed">
+    <parent link="base"/>
+    <child link="table_link"/>
+    <origin xyz="0.400 0.345 -0.3225" rpy="0 0 0"/>
+  </joint>
+
+  <!-- A3: 297 mm langs X og 420 mm langs Y -->
+  <link name="paper_link">
+    <visual>
+      <geometry>
+        <box size="0.297 0.420 0.0002"/>
+      </geometry>
+      <material name="paper_white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="base_to_paper" type="fixed">
+    <parent link="base"/>
+    <child link="paper_link"/>
+    <origin xyz="0.4885 0.065 -0.3005" rpy="0 0 0"/>
+  </joint>
+
+</robot>

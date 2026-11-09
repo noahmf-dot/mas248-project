@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>mas248_ur5e_real</name>
+  <version>0.3.0</version>
+  <description>MAS248 Lecture 10: physical UR5e planning-only commissioning with calibrated workcell reusing L8/L9.</description>
+  <maintainer email="mas248@uia.no">MAS248 Robotics</maintainer>
+  <license>BSD-3-Clause</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <exec_depend>mas248_ur5e</exec_depend>
+  <exec_depend>mas248_ur5e_moveit_config</exec_depend>
+  <exec_depend>mas248_ur5e_demos</exec_depend>
+  <exec_depend>ur_robot_driver</exec_depend>
+  <exec_depend>ur_dashboard_msgs</exec_depend>
+  <exec_depend>ur_description</exec_depend>
+  <exec_depend>ur_client_library</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>moveit_ros_move_group</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
+  <exec_depend>ur_calibration</exec_depend>
+  <exec_depend>ros2controlcli</exec_depend>
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>controller_manager_msgs</exec_depend>
+  <exec_depend>action_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>moveit_msgs</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>

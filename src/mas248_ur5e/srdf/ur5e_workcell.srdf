@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<robot name="mas248_ur5e">
+  <!-- Optional starter SRDF for later MoveIt work -->
+  <group name="manipulator">
+    <chain base_link="base_link" tip_link="tool0"/>
+  </group>
+  <!-- Starter arm planning group only; define the tool and planning scene in MoveIt Setup Assistant. -->
+</robot>

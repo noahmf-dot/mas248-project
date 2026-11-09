@@ -1,0 +1,25 @@
+# Shared parameters: both driver.launch.py and moveit_real.launch.py use these values.
+# Robot-specific robot_ip and calibration MUST be supplied on the command line.
+hardware:
+  reverse_ip: '0.0.0.0'
+  reverse_port: '50001'
+  script_sender_port: '50002'
+  script_command_port: '50004'
+  trajectory_port: '50003'
+  safety_limits: 'true'
+  safety_pos_margin: '0.15'
+  safety_k_position: '20'
+  headless_mode: 'false'
+  verify_robot_model: 'true'
+  use_tool_communication: 'false'
+  tool_voltage: '0'
+  tool_parity: '0'
+  tool_baud_rate: '115200'
+  tool_stop_bits: '1'
+  tool_rx_idle_chars: '1.5'
+  tool_tx_idle_chars: '3.5'
+  tool_device_name: '/tmp/ttyUR'
+  tool_tcp_port: '54321'
+driver_only:
+  controller_spawner_timeout: '20'
+  launch_dashboard_client: 'true'

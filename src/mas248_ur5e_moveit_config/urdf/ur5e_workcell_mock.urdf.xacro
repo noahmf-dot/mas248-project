@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!-- MAS248 Lecture 9 OFFLINE MoveIt mock model.
+     Reuses the unmodified Lecture 8 robot geometry from mas248_ur5e.
+     The extra ros2_control hardware below must never be used as the hardware
+     description for a physical UR5e. Use the real UR ROS2 driver in Lecture 10. -->
+<robot name="mas248_ur5e" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:include filename="$(find mas248_ur5e)/urdf/ur5e_workcell.urdf.xacro"/>
+
+  <!-- Lecture 9 ONLY: software-controlled six-joint mock system -->
+    <ros2_control name="MAS248MockHardware" type="system">
+      <hardware>
+        <plugin>mock_components/GenericSystem</plugin>
+        <param name="calculate_dynamics">false</param>
+      </hardware>
+      <joint name="shoulder_pan_joint">
+        <command_interface name="position"/>
+        <state_interface name="position"><param name="initial_value">0.0</param></state_interface>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="shoulder_lift_joint">
+        <command_interface name="position"/>
+        <state_interface name="position"><param name="initial_value">-1.57</param></state_interface>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="elbow_joint">
+        <command_interface name="position"/>
+        <state_interface name="position"><param name="initial_value">1.57</param></state_interface>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="wrist_1_joint">
+        <command_interface name="position"/>
+        <state_interface name="position"><param name="initial_value">-1.57</param></state_interface>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="wrist_2_joint">
+        <command_interface name="position"/>
+        <state_interface name="position"><param name="initial_value">-1.57</param></state_interface>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="wrist_3_joint">
+        <command_interface name="position"/>
+        <state_interface name="position"><param name="initial_value">0.0</param></state_interface>
+        <state_interface name="velocity"/>
+      </joint>
+    </ros2_control>
+</robot>

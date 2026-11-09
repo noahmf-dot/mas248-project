@@ -1,0 +1,108 @@
+MAS248 LECTURE 9 — STUDENT STARTER v0.4.0
+ROS2 HUMBLE / UBUNTU 22.04 — IMAGE-CENTRED TARGETS (NO A4 MODEL)
+=================================================================
+
+
+INSTALL 
+----------------------------------------
+Unzip to ~/mas248_ws so package is under ~/mas248_ws/src/mas248_ur5e_demos.
+  cd ~/mas248_ws
+  source /opt/ros/humble/setup.bash
+  colcon build --symlink-install --packages-select mas248_ur5e_demos
+  source install/setup.bash
+
+
+SEPARATE LAUNCH ORDER
+---------------------
+TERMINAL 1: Mock UR5e + controller manager (leave running)
+  source ~/mas248_ws/install/setup.bash
+  ros2 launch mas248_ur5e_moveit_config ros2_control.launch.py
+
+TERMINAL 2: MoveIt + RViz (leave running)
+  source ~/mas248_ws/install/setup.bash
+  ros2 launch mas248_ur5e_moveit_config moveit.launch.py
+
+TERMINAL 3: Targets (leave running if using --rviz)
+  source ~/mas248_ws/install/setup.bash
+  ros2 run mas248_ur5e_demos image_to_targets pumpkin_outline.png \
+    --width-m 0.18 --center-x 0.55 --center-y 0 --center-z 0.46 \
+    --tcp-offset-mm 30 --max-contours 4 --max-points 40 \
+    --open-stages --rviz --axis-every 4
+  --rviz publishes continuously; Ctrl+C to stop. This is NOT a freeze.
+  Browser stages: ~/MAS248_Image_Stages/index.html (no OpenCV popup).
+  Outputs: /tmp/mas248_targets.json, /tmp/mas248_contours.png.
+  Note: max-contours counts OpenCV boundary loops, not physical pen strokes.
+
+TERMINAL 4: Other supplied MoveIt demos / own solution
+  source ~/mas248_ws/install/setup.bash
+  ros2 control list_controllers
+  ros2 run mas248_ur5e_demos check_stack
+  ros2 run mas248_ur5e_demos move_two_targets            # plan only
+  ros2 run mas248_ur5e_demos move_two_targets --execute  # mock only
+  ros2 run mas248_ur5e_demos add_cube
+  ros2 run mas248_ur5e_demos add_cube --remove
+
+To use another image:
+  ros2 run mas248_ur5e_demos image_to_targets \
+    "$HOME/Pictures/my_image.png" --width-m 0.12 \
+    --center-x 0.60 --center-y 0.05 --center-z 0.48 --rviz
+
+In RViz: Fixed Frame world; Add > MarkerArray on /mas248/drawing_targets.
+Toggle MarkerArray namespaces individually: MAS248_image_bounds (outline),
+MAS248_contour_paths, MAS248_TCP_waypoints, MAS248_TCP_orientation_X/Y/Z,
+MAS248_stroke_start and MAS248_image_frame_axes. MotionPlanning Planned Path
+is different from image input targets and is controlled independently.
+
+ROS2 SOURCE FILES — WHAT EACH DOES
+---------------------------------
+scripts/image_to_targets.py : read PNG/JPG, grayscale, threshold, contours,
+                              sampling, user-selected scaling + image centre,
+                              save JSON, PNG stages and preview; optional RViz.
+scripts/stage_viewer.py     : create an HTML slideshow, opens in Firefox.
+scripts/common.py           : helpers for MoveGroup planning, Cartesian planning
+                              and mock trajectory execution (import in own code).
+scripts/move_two_targets.py : example joint/TCP planning, --execute mock only.
+scripts/add_cube.py         : add/remove MoveIt planning-scene obstacle.
+scripts/check_stack.py      : check ROS2 services and controllers are available.
+scripts/__init__.py         : intentionally empty; makes scripts importable.
+images/pumpkin_outline.jpg  : bundled example; use another file path if wanted.
+setup.py/setup.cfg/package.xml: ROS2 Python metadata and CLI entry points.
+
+TARGET FILE SCHEMA: /tmp/mas248_targets.json
+-------------------------------------------
+drawing_frame='image_center'
+frame_to_world: static transform from world to image centre (X,Y,Z and yaw)
+image.width_m, image.height_m: dimensions in METRES
+image.center_world_xyz_m: frame origin in world (metres)
+strokes[n].pixels: sampled raster (u,v) in pixels, origin top-left
+strokes[n].poses_image: list of x,y,z,qx,qy,qz,qw in IMAGE frame (metres)
+strokes[n].poses: list of x,y,z,qx,qy,qz,qw in WORLD frame (metres)
+Use poses in world directly for MoveIt or transform poses_image with TF2.
+No paper model, margins, A4 rectangle or paper-origin parameters are included.
+These are contour BOUNDARIES, not guaranteed smooth pen-centrelines.
+
+OFFLINE TESTS — NO MOVEIT / RVIZ / ROBOT REQUIRED
+------------------------------------------------
+  cd ~/mas248_ws/src/mas248_ur5e_demos
+  python3 -m unittest discover -s tests -v
+  python3 -m unittest discover -s tests -p 'test_offline_pipeline.py' -v
+  python3 -m unittest discover -s tests -p 'test_tcp_orientation.py' -v
+  python3 -m unittest discover -s tests -p 'test_no_blocking_opencv_gui.py' -v
+
+Tests explained:
+  test_offline_pipeline.py     bundled picture, stages, width/aspect ratio,
+                               centred frame, world shifts, yaw, input checks.
+  test_tcp_orientation.py      quaternion rotate and X/Y/Z TCP triads.
+  test_no_blocking_opencv_gui.py verifies --open-stages and --rviz options,
+                               and prohibits frozen OpenCV HighGUI calls.
+All tests check PROVIDED scripts, not your custom run_picture implementation.
+To test your own code, add tests for reachability, collision checking,
+Cartesian completion fraction and joint continuity (mock only).
+
+FURTHER NOTES
+-------------
+The example dimensions and centre are NOT calibrated to any lab machine.
+Preflight every stroke before executing; do not execute partial plans.
+Keep same ROS_DOMAIN_ID within a workstation; different groups should use
+non-interfering ROS domains. Do not launch demo.launch.py together with the
+split controller + MoveIt launches.

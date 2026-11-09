@@ -1,0 +1,12 @@
+build/
+install/
+log/
+__pycache__/
+*.py[cod]
+*.bak*
+*.zip
+*.mov
+*.MOV
+*.mp4
+*.MP4
+ur5e_calibration.yaml

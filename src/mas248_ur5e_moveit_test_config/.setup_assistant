@@ -1,0 +1,10 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: mas248_ur5e
+    relative_path: urdf/ur5e_workcell.urdf.xacro
+  srdf:
+    relative_path: config/mas248_ur5e.srdf
+  package_settings:
+    author_name: Noah
+    author_email: noahmf@uia.no
+    generated_timestamp: 1793011465

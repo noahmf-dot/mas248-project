@@ -1,0 +1,5 @@
+# UR5e nominal rtde/ros2_control rate. The build installs the official ur_robot_driver version instead.
+# Source reference; build artefact is copied from the installed driver.
+controller_manager:
+  ros__parameters:
+    update_rate: 500
