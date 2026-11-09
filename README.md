@@ -1,6 +1,6 @@
 # MAS248 UR5e drawing workspace
 
-Source copied from the 5 November laboratory backup. Generated Python caches and backup variants were omitted from this copy. The original archive is preserved separately. The workspace has been inspected on Windows; ROS build and execution still need verification on Ubuntu with ROS 2 Humble. No robot motion was run while preparing this folder.
+Source copied from the 5 November laboratory backup. The original archive is preserved separately. A fresh build and mock execution were verified on Ubuntu 22.04.5 LTS with ROS 2 Humble.
 
 ## Workspace
 
@@ -22,7 +22,7 @@ colcon build --symlink-install
 source install/setup.bash
 ```
 
-For the mock setup, see `src/MAS248_L9_Student_Image_Centered_Guide.txt` and the package README. Use the mock launch files and `data/mock_targets.json`. The archived `scripts/run_picture_smooth.py` defaults to plan-only and has a separate `--execute-mock` option. Confirm that the actual loaded hardware plugin is the mock system before executing. Record a fresh build and planning/mock result here before submission.
+For the mock setup, see `src/MAS248_L9_Student_Image_Centered_Guide.txt` and the package README. Use the mock launch files and `data/mock_targets.json`. The archived `scripts/run_picture_smooth.py` defaults to plan-only and has a separate `--execute-mock` option. The script checks for the `mock_components/GenericSystem` hardware plugin before mock execution.
 
 From separate terminals with the workspace sourced, start mock control and MoveIt respectively.
 
@@ -41,10 +41,20 @@ python3 src/mas248_ur5e_demos/scripts/run_picture_smooth.py \
   --targets data/mock_targets.json --strokes 4
 ```
 
+### Verified run on 9 November 2026
+
+A clean source archive of commit `d9428a9` built all seven packages. All 12 offline Python tests passed. Running the drawing script with `--execute-mock` completed all four contours and exited successfully. This exercises planning and the simulated joint trajectory controller. The mock target plane is at `world` Z = 0.49 m and is separate from the paper mesh in the workcell model.
+
+RViz displayed the robot model, but its MotionPlanning panel reported a joint-limit parameter type mismatch and could not render the planned trajectories during this run. To view the **target contours** separately, run the following from a sourced terminal and add a `MarkerArray` display in RViz for `/mas248/drawing_targets` with fixed frame `world`.
+
+```bash
+ros2 run mas248_ur5e_demos show_targets_rviz --json data/mock_targets.json
+```
+
 The physical package has separate driver and MoveIt launches and a plan-only default. Use the approved laboratory setup and matching calibration. Keep the robot-specific calibration separate from the Git repository; it is preserved in the local Results folder. Do not reuse mock coordinates on the physical robot. Final live timing parameters were not preserved in the success note.
 
 The operator reported using `--height-offset 0.164` m for the successful physical run. The physical target file in `data/` contains the input targets, to which the execution script applies that offset.
 
 ## Before publishing
 
-Fill in group contributions and distinguish supplied teaching code, vendor dependencies and group changes. Check course permission and applicable licences before sharing. Confirm ROS build/test status and remove any unnecessary files from the intended Git commit. Keep the raw videos and original backup outside this code repository.
+Fill in group contributions and distinguish supplied teaching code, vendor dependencies and group changes. Check course permission and applicable licences before sharing. Keep the raw videos and original backup outside this code repository.
